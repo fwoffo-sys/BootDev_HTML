@@ -1,5 +1,5 @@
 from enum import Enum
-from htmlnode import *
+from htmlnode import LeafNode, HTMLNode
 from text_manipulation import extract_markdown_images, extract_markdown_links
 
 
@@ -154,3 +154,8 @@ def text_to_textnodes(text: str) -> list[TextNode]:
     nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
     return nodes
+
+def text_to_html_nodes(text: str) -> [HTMLNode]:
+    text_nodes = text_to_textnodes(text)
+    html_nodes = [text_node_to_html_node(node) for node in text_nodes]
+    return html_nodes

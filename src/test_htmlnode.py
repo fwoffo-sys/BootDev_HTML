@@ -55,9 +55,6 @@ class TestHTMLNode(unittest.TestCase):
             "<div><span><b>grandchild</b></span></div>",
         )
 
-        
-    
-
 
 if __name__ == "__main__":
     unittest.main()
