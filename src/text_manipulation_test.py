@@ -22,4 +22,5 @@ class TestTextManipulation(unittest.TestCase):
         expected = [("GitHub", "https://github.com")]
         self.assertEqual(extract_markdown_images(text), expected)
 
-    
+if __name__ == "__main__":
+    unittest.main()
