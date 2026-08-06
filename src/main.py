@@ -35,7 +35,6 @@ def generate_page(from_path, template_path, dest_path):
 
     page = template.replace(r"{{ Title }}", markdown_title).replace(r"{{ Content }}", html_content)
 
-
     #make sure the destination directory exists
     dest_dir = os.path.dirname(dest_path)
     if not os.path.exists(dest_dir):
