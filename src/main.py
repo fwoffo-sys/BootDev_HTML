@@ -1,3 +1,4 @@
+import sys
 from htmlnode import HTMLNode
 from text_to_HTML import markdown_to_html
 import os
@@ -24,7 +25,7 @@ def get_markdown_title(markdown):
             return line[2:].strip()
     raise Exception("No starting title found in markdown")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     with open(from_path, "r") as f:
         markdown = f.read()
     markdown_title = get_markdown_title(markdown)
@@ -34,6 +35,7 @@ def generate_page(from_path, template_path, dest_path):
         template = f.read()
 
     page = template.replace(r"{{ Title }}", markdown_title).replace(r"{{ Content }}", html_content)
+    page = page.replace(r'href="/', f'href="{basepath}').replace(r'src="/', f'src="{basepath}')
 
     #make sure the destination directory exists
     dest_dir = os.path.dirname(dest_path)
@@ -42,20 +44,23 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, "w") as f:
         f.write(page)
 
-def generate_page_recursively(from_dir, template_path, dest_dir):
+def generate_page_recursively(from_dir, template_path, dest_dir, basepath):
     files = os.listdir(from_dir)
     for file in files:
         from_path = os.path.join(from_dir, file)
         if os.path.isfile(from_path) and file.endswith(".md"):
             relative_path = os.path.relpath(from_path, from_dir)
             dest_path = os.path.join(dest_dir, relative_path[:-3] + ".html")
-            generate_page(from_path, template_path, dest_path)
+            generate_page(from_path, template_path, dest_path, basepath)
         elif os.path.isdir(from_path):
             dest_subdir = os.path.join(dest_dir, file)
-            generate_page_recursively(from_path, template_path, dest_subdir)
+            generate_page_recursively(from_path, template_path, dest_subdir, basepath)
 
 def main():
-    copy_directory("./static", "./public")
-    generate_page_recursively("./content", "./template.html", "./public")
+    basepath = "/"
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+    copy_directory("./static", "./docs")
+    generate_page_recursively("./content", "./template.html", "./docs", basepath)
 
 main()
